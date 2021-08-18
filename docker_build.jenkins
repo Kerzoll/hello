@@ -22,5 +22,11 @@ pipeline {
         }
       }
     }
+    stage("docker build") {
+      steps {
+        echo " ============== docker build ================="
+        sh 'docker-compose up -d'
+      }
+    }
   }
 }
