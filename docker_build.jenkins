@@ -1,0 +1,24 @@
+#!groovy
+	// Run docker build
+	properties([disableConcurrentBuilds()])
+
+pipeline {
+  agent {
+    label 'master'
+  }
+  options { 
+    buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10')) timestamps()
+  }
+  stages {
+    stage("docker login") {
+      steps{ 
+        echo " ============== docker login =================" 
+        withCredentials([usernamePassword(credentialsId: 'auth_for_docker_hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+	  sh """ 
+          docker login -u $USERNAME -p $PASSWORD 
+          """
+        }
+      }
+    }
+  }
+}
