@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  php:
+    image: yiisoftware/yii2-php:7.4-apache
+    environment:
+      - PHP_ENABLE_XDEBUG=0
+      - PHP_IDE_CONFIG=serverName=MyTestServer
+    ports:
+      - '80:80'
+    environment:
+      - PHP_IDE_CONFIG=serverName=MyTestServer
+    volumes:
+      - ./basic:/app:delegated
+      - ./config/apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_DATABASE=yii_db
+      - MYSQL_USER=yii_user
+      - MYSQL_PASSWORD=yii_user_pass
+      - MYSQL_ROOT_PASSWORD=yii_root_pass
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - "./mysql:/var/lib/mysql"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '4538:80'
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=db
+    depends_on:
+      - db
